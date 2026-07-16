@@ -4,7 +4,7 @@ local Camera = CheckIn.Camera
 local Computer = CheckIn.Computer
 local Printer = CheckIn.Printer
 
-local NPCs = workspace.NPCs
+local NPCsFolder = workspace.NPCs
 --local LouisKimura = NPCs["Louis Kimura"]
 
 local function FireProximityPrompt(proximityPrompt)
@@ -33,6 +33,15 @@ local function CheckInChildAdded(child)
             task.wait()
         until child.Parent == nil
     end
+end
+
+local function NPCAdded(npc)
+    FireWhenEnabled(npc.PP)
+end
+
+NPCsFolder.ChildAdded:Connect(NPCAdded)
+for _, child in NPCsFolder:GetChildren() do
+    task.spawn(NPCAdded, child)
 end
 
 CheckIn.ChildAdded:Connect(CheckInChildAdded)
