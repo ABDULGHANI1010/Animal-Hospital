@@ -1,4 +1,9 @@
+if not game:IsLoaded() then 
+    game.Loaded:Wait() 
+end
+
 local CheckIn = workspace.Misc.CheckIn
+local MedicalRooms = workspace.Rooms.Medical
 
 local Camera = CheckIn.Camera
 local Computer = CheckIn.Computer
@@ -6,24 +11,18 @@ local Printer = CheckIn.Printer
 
 local NPCsFolder = workspace.NPCs
 
-local function FireProximityPrompt(proximityPrompt)
-    fireproximityprompt(proximityPrompt)
-end
-
 local function FireWhenEnabled(proximityPrompt)
+    proximityPrompt.RequiresLineOfSight = false
+    
     local function EnabledChanged()
         if proximityPrompt.Enabled then
-            FireProximityPrompt(proximityPrompt)
+            fireproximityprompt(proximityPrompt)
         end
     end
     
     proximityPrompt:GetPropertyChangedSignal("Enabled"):Connect(EnabledChanged)
     EnabledChanged()
 end
-
-FireWhenEnabled(Camera.PP)
-FireWhenEnabled(Computer.PP)
-FireWhenEnabled(Printer.PP)
 
 local function CheckInChildAdded(child)
     if child.Name == "Form" or child.Name == "PrintedBadge" then
@@ -41,12 +40,33 @@ local function NPCAdded(npc)
     end)
 end
 
-NPCsFolder.ChildAdded:Connect(NPCAdded)
-for _, child in NPCsFolder:GetChildren() do
-    task.spawn(NPCAdded, child)
+local function Room(room)
+    local Minigame = room.Minigame
+    
+    local Analyzer = Minigame.Analyzer
+    local Computer = Minigame.Computer
+
+    FireWhenEnabled(Analyzer.PP)
+    FireWhenEnabled(Computer.PP)
 end
 
-CheckIn.ChildAdded:Connect(CheckInChildAdded)
-for _, child in CheckIn:GetChildren() do
-    task.spawn(CheckInChildAdded, child)
+local function ForEachChild(parent, callback)
+    for _, child in parent:GetChildren() do
+        task.spawn(callback, child)
+    end
 end
+
+local function SafeChildAdded(parent, callback)
+    local Connection = parent.ChildAdded:Connect(callback)
+    ForEachChild(parent, callback)
+
+    return function() Connection:Disconnect() end
+end
+
+FireWhenEnabled(Camera.PP)
+FireWhenEnabled(Computer.PP)
+FireWhenEnabled(Printer.PP)
+
+SafeChildAdded(NPCsFolder, NPCAdded)
+SafeChildAdded(CheckIn, CheckInChildAdded)
+ForEachChild(MedicalRooms, Room)
