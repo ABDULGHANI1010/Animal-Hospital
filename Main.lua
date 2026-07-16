@@ -13,6 +13,7 @@ local NPCsFolder = workspace.NPCs
 
 local function FireWhenEnabled(proximityPrompt)
     proximityPrompt.RequiresLineOfSight = false
+    proximityPrompt.MaxActivationDistance = 1024
     
     local function EnabledChanged()
         if proximityPrompt.Enabled then
