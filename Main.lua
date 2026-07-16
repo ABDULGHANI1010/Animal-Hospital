@@ -38,6 +38,7 @@ end
 local function FireWhenEnabled(proximityPrompt)
     local function EnabledChanged()
         if proximityPrompt.Enabled then
+            print("Proximity prompt was enabled ", proximityPrompt.Parent.Name)
             FireProximityPrompt(proximityPrompt)
         end
     end
@@ -57,9 +58,6 @@ end
 
 local function NPCAdded(npc)
     FireWhenEnabled(npc:WaitForChild("PP"))
-    npc.ChildAdded:Connect(function(child)
-        print("child added to npc: ", child.Name)
-    end)
 end
 
 local function Room(room)
