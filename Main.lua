@@ -5,7 +5,6 @@ local Computer = CheckIn.Computer
 local Printer = CheckIn.Printer
 
 local NPCsFolder = workspace.NPCs
---local LouisKimura = NPCs["Louis Kimura"]
 
 local function FireProximityPrompt(proximityPrompt)
     fireproximityprompt(proximityPrompt)
@@ -37,6 +36,9 @@ end
 
 local function NPCAdded(npc)
     FireWhenEnabled(npc:WaitForChild("PP"))
+    npc.ChildAdded:Connect(function(child)
+        print(child.Name)
+    end)
 end
 
 NPCsFolder.ChildAdded:Connect(NPCAdded)
