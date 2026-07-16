@@ -2,6 +2,10 @@ if not game:IsLoaded() then
     game.Loaded:Wait() 
 end
 
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+
 local CheckIn = workspace.Misc.CheckIn
 local MedicalRooms = workspace.Rooms.Medical
 
@@ -11,13 +15,30 @@ local Printer = CheckIn.Printer
 
 local NPCsFolder = workspace.NPCs
 
-local function FireWhenEnabled(proximityPrompt)
-    proximityPrompt.RequiresLineOfSight = false
-    proximityPrompt.MaxActivationDistance = 1024
+local function GetProximityAdornee(proximityPrompt)
+    local Parent = proximityPrompt.Parent
     
+    if Parent:IsA("Model") then
+        return Parent.PrimaryPart
+    else 
+        return Parent
+    end
+end
+
+local function FireProximityPrompt(proximityPrompt)
+    local Adornee = GetProximityAdornee(proximityPrompt)
+
+    if Adornee then
+        Character:PivotTo(Adornee.CFrame)
+        task.wait(0.1)
+    end
+    fireproximityprompt(proximityPrompt)
+end
+
+local function FireWhenEnabled(proximityPrompt)
     local function EnabledChanged()
         if proximityPrompt.Enabled then
-            fireproximityprompt(proximityPrompt)
+            FireProximityPrompt(proximityPrompt)
         end
     end
     
