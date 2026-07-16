@@ -4,8 +4,6 @@ local Camera = CheckIn.Camera
 local Computer = CheckIn.Computer
 local Printer = CheckIn.Printer
 
-
-
 local NPCs = workspace.NPCs
 --local LouisKimura = NPCs["Louis Kimura"]
 
@@ -30,7 +28,10 @@ FireWhenEnabled(Printer.PP)
 
 local function CheckInChildAdded(child)
     if child.Name == "Form" or child.Name == "PrintedBadge" then
-        FireProximityPrompt(child.PP)
+        repeat 
+            FireProximityPrompt(child.PP)
+            task.wait()
+        until child.Parent == nil
     end
 end
 
