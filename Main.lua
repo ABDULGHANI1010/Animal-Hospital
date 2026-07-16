@@ -37,7 +37,7 @@ end
 local function NPCAdded(npc)
     FireWhenEnabled(npc:WaitForChild("PP"))
     npc.ChildAdded:Connect(function(child)
-        print(child.Name)
+        print("child added to npc: ", child.Name)
     end)
 end
 
