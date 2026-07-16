@@ -29,14 +29,14 @@ FireWhenEnabled(Printer.PP)
 local function CheckInChildAdded(child)
     if child.Name == "Form" or child.Name == "PrintedBadge" then
         repeat 
-            FireProximityPrompt(child.PP)
+            FireProximityPrompt(child:WaitForChild("PP"))
             task.wait()
         until child.Parent == nil
     end
 end
 
 local function NPCAdded(npc)
-    FireWhenEnabled(npc.PP)
+    FireWhenEnabled(npc:WaitForChild("PP"))
 end
 
 NPCsFolder.ChildAdded:Connect(NPCAdded)
